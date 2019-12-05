@@ -3,6 +3,7 @@ const hbs = require('express-handlebars');
 const path = require('path');
 var app = express();
 
+const objectId = require("mongodb").ObjectID;
 const MongoClient = require("mongodb").MongoClient;
 
 // view render engine setup
@@ -21,15 +22,14 @@ app.get('/', (req, res) => {
 	    const collection = dataBase.collection('articles');
 	    collection.find({}).toArray(function(err, result) {
 	    if (err) throw err;
-	    console.log(result);
 	    result = result.map(elem => {
 	    	let news = '';
-	    	delete elem._id;
+	    	let id = elem._id;
 	    	delete elem.text;
 	    	for (const i in elem) {
 	    		news += `\n<p>${elem[i]}</p>`;
 	    	}
-	    	return '<div class="newsdiv"><a class="news" href="#">' + news + '</a></div>';
+	    	return '<div class="newsdiv"><a class="news" href="/article/'+ id + '">' + news + '</a></div>';
 	    });
 		res.render('main', { layout: 'default', articles: result });
 	    db.close();
@@ -43,6 +43,23 @@ app.use('/views', (req, res) => {
 	res.sendFile(filename, null, err => {
 		if (err)
 			console.log(err);
+	});
+});
+
+app.use('/article/:id', (req, res) => {
+	MongoClient.connect("mongodb://localhost:27017/", (err, db) => {
+	    if(err){
+	        return console.log(err);
+	    }
+	    const dataBase = db.db("Publishing");
+	    const collection = dataBase.collection('articles');
+		const id = new objectId(req.params.id);
+	    collection.findOne({_id : id}, (err, doc) => {
+	    if (err) throw err;
+	    console.log(doc);
+		res.render('article', { layout: 'default', name : doc.name, text : doc.text, date : doc.text});
+	    db.close();
+	  });
 	});
 });
 
