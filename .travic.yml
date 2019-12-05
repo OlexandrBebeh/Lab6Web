@@ -1,8 +1,10 @@
-language
+language:
     node_js
-node_js
+node_js:
     - 12
-install
+install:
     npm install
-script
+script:
     npm test
+services: 
+    mongodb
