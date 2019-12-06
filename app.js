@@ -1,5 +1,4 @@
 'use strict';
-const http = require('http');
 
 const express = require('express');
 const hbs = require('express-handlebars');
@@ -9,17 +8,8 @@ const app = express();
 //const connectDB = require('./DB/Connection');
 
 //connectDB();
-const server = http.createServer((req, res) => {
-    if (req.method !== 'GET') {
-        res.statusCode = 501;
-        res.setHeader('Content-Type', 'text/plain');
-        return res.end('Method not implemented');
-    }
-    console.log(req.url);
-});
-const Port = process.env.Port || 3000;
 
-server.listen(Port);
+const Port = process.env.PORT || 3000;
 
 const objectId = require('mongodb').ObjectID;
 const MongoClient = require('mongodb').MongoClient;
