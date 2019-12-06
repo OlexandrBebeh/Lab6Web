@@ -1,10 +1,11 @@
+'use strict';
+const http = require('http');
+
 const express = require('express');
 const hbs = require('express-handlebars');
 const path = require('path');
 const app = express();
 
-const http = require('http');
-const fs = require('fs');
 //const connectDB = require('./DB/Connection');
 
 //connectDB();
@@ -15,8 +16,6 @@ const server = http.createServer((req, res) => {
         return res.end('Method not implemented');
     }
     console.log(req.url);
-    const dataSender = routing[req.url];
-    dataSender(res);
 });
 const Port = server.listen(process.env.Port || 3000);
 
