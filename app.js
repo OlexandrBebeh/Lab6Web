@@ -6,7 +6,16 @@ const app = express();
 //const connectDB = require('./DB/Connection');
 
 //connectDB();
-
+const server = http.createServer((req, res) => {
+    if (req.method !== 'GET') {
+        res.statusCode = 501;
+        res.setHeader('Content-Type', 'text/plain');
+        return res.end('Method not implemented');
+    }
+    console.log(req.url);
+    const dataSender = routing[req.url];
+    dataSender(res);
+});
 const Port = server.listen(process.env.Port || 3000);
 
 const objectId = require('mongodb').ObjectID;
