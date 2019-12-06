@@ -1,7 +1,13 @@
-var express = require('express');
+const express = require('express');
 const hbs = require('express-handlebars');
 const path = require('path');
-var app = express();
+const app = express();
+
+const connectDB = require('./DB/Connection');
+
+connectDB();
+
+const Port = process.env.Port || 3000;
 
 const objectId = require('mongodb').ObjectID;
 const MongoClient = require('mongodb').MongoClient;
@@ -80,4 +86,4 @@ app.use('/article/:id', (req, res) => {
     });
 });
 
-app.listen(3000);
+app.listen(Port, () => console.log('server start'));
