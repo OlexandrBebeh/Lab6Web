@@ -23,7 +23,8 @@
     "prepush": "npm run test",
     "prettier": "prettier --config .prettierrc.json --write app.js",
     "test": "eslint app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "start": "node app.js"
   },
   "author": "Olexandr0.0",
   "license": "ISC"
