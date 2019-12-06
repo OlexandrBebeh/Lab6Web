@@ -19,6 +19,8 @@ const server = http.createServer((req, res) => {
 });
 const Port = server.listen(process.env.Port || 3000);
 
+server.listen(PORT);
+
 const objectId = require('mongodb').ObjectID;
 const MongoClient = require('mongodb').MongoClient;
 
@@ -96,4 +98,4 @@ app.use('/article/:id', (req, res) => {
     });
 });
 
-app.listen(Port, () => console.log('server start'));
+//app.listen(Port, () => console.log('server start'));
