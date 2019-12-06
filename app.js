@@ -3,9 +3,9 @@ const hbs = require('express-handlebars');
 const path = require('path');
 const app = express();
 
-const connectDB = require('./DB/Connection');
+//const connectDB = require('./DB/Connection');
 
-connectDB();
+//connectDB();
 
 const Port = process.env.Port || 3000;
 
