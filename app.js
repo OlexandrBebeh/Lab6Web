@@ -7,7 +7,7 @@ const app = express();
 
 //connectDB();
 
-const Port = process.env.Port || 3000;
+const Port = server.listen(process.env.Port || 3000);
 
 const objectId = require('mongodb').ObjectID;
 const MongoClient = require('mongodb').MongoClient;
