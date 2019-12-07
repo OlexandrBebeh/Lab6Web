@@ -4,17 +4,18 @@ const express = require('express');
 const hbs = require('express-handlebars');
 const path = require('path');
 const app = express();
+const Schema = mongoose.Schema();
+const connectDB = require('./DB/Connection');
 
-//const connectDB = require('./DB/Connection');
-
-//connectDB();
+connectDB();
 
 const Port = process.env.PORT || 3000;
 
 const objectId = require('mongodb').ObjectID;
 const MongoClient = require('mongodb').MongoClient;
+app.use('/api/userModel', require('./API/User'));
+app.use(express.json({ extended: false }));
 
-// view render engine setup
 app.engine(
     'hbs',
     hbs({
@@ -26,6 +27,21 @@ app.engine(
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
+app.use('/views', (req, res) => {
+    const filename = __dirname + '/views' + req.url;
+    console.log(filename);
+    res.sendFile(filename, null, (err) => {
+        if (err) console.log(err);
+    });
+});
+
+
+
+
+
+
+app.listen(Port, () => console.log('server start'));
+/*
 app.get('/', (req, res) => {
     MongoClient.connect('mongodb://localhost:27017/', function(err, db) {
         if (err) {
@@ -57,15 +73,8 @@ app.get('/', (req, res) => {
         });
     });
 });
-
-app.use('/views', (req, res) => {
-    const filename = __dirname + '/views' + req.url;
-    console.log(filename);
-    res.sendFile(filename, null, (err) => {
-        if (err) console.log(err);
-    });
-});
-
+*/
+/*
 app.use('/article/:id', (req, res) => {
     MongoClient.connect('mongodb://localhost:27017/', (err, db) => {
         if (err) {
@@ -87,5 +96,4 @@ app.use('/article/:id', (req, res) => {
         });
     });
 });
-
-app.listen(Port, () => console.log('server start'));
+*/
