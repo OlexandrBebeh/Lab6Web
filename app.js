@@ -4,6 +4,7 @@ const express = require('express');
 const hbs = require('express-handlebars');
 const path = require('path');
 const app = express();
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema();
 const connectDB = require('./DB/Connection');
 
@@ -11,8 +12,8 @@ connectDB();
 
 const Port = process.env.PORT || 3000;
 
-const objectId = require('mongodb').ObjectID;
-const MongoClient = require('mongodb').MongoClient;
+//const objectId = require('mongodb').ObjectID;
+//const MongoClient = require('mongodb').MongoClient;
 app.use('/api/userModel', require('./API/User'));
 app.use(express.json({ extended: false }));
 
@@ -35,7 +36,10 @@ app.use('/views', (req, res) => {
     });
 });
 
-
+const articleSchema = new Schema({
+    name: { type: String, required: true },
+    text: { type: String, required: true }
+});
 
 
 
