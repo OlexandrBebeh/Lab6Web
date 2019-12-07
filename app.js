@@ -5,10 +5,9 @@ const hbs = require('express-handlebars');
 const path = require('path');
 const app = express();
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema();
+const Schema = mongoose.Schema;
 const connectDB = require('./DB/Connection');
 
-connectDB();
 
 const Port = process.env.PORT || 3000;
 
@@ -39,11 +38,38 @@ app.use('/views', (req, res) => {
 const articleSchema = new Schema({
     name: { type: String, required: true },
     text: { type: String, required: true }
-});
+    },
+    { versionKey: false }
+);
 
+const Articles = mongoose.model('Articles', articleSchema);
 
+connectDB();
 
-
+app.post('/', (req, res) => {
+    console.log('All articles');
+    Articles.find({}).toArray(function (err, result) {
+        if (err) throw err;
+        result = result.map((elem) => {
+            let news = '';
+            let id = elem._id;
+            delete elem._id;
+            delete elem.text;
+            for (const i in elem) {
+                news += `\n<p>${elem[i]}</p>`;
+            }
+            return (
+                '<div class="newsdiv"><a class="news" href="/article/' +
+                id +
+                '">' +
+                news +
+                '</a></div>'
+            );
+        });
+        res.render('main', { layout: 'default', articles: result });
+        db.close();
+    });
+})
 app.listen(Port, () => console.log('server start'));
 /*
 app.get('/', (req, res) => {
