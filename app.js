@@ -67,7 +67,6 @@ app.post('/', (req, res) => {
             );
         });
         res.render('main', { layout: 'default', articles: result });
-        db.close();
     });
 })
 app.listen(Port, () => console.log('server start'));
