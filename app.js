@@ -46,9 +46,10 @@ const ArticleSchema = new Schema(
 
 const Articles = mongoose.model("articles", ArticleSchema);
 app.get('/', (req, res) => {
-    Articles.find({}, function (err, users) {
-        res.render('main', { layout: 'default', articles: users });
-    });
+    res.end('DONE');
+    // Articles.find({}, function (err, users) {
+    //     res.render('main', { layout: 'default', articles: users });
+    // });
 });
 
 app.use('/articles/:id', (req, res) => {
@@ -61,17 +62,18 @@ app.use('/articles/:id', (req, res) => {
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 app.get('/post', urlencodedParser, (req, res) => {
+    console.log('get post');
     res.sendFile(__dirname + '/views/post.html');
 });
 app.post('/post', urlencodedParser, function (req, res) {
+    console.log('post post');
     if (!req.body) return response.sendStatus(400);
     console.log(req.body);
     Articles.create({ name: req.body.name, text: req.body.text, date: new Date() }, (err, doc) => {
         if (err) return console.log(err);
         console.log("Сохранен объект user", doc);
     });
-    res.send(`${req.body.name} - ${req.body.text}`);
-   // res.sendFile(__dirname + '/views/post.html');
+   res.sendFile(__dirname + '/views/post.html');
 });
 
 /*
