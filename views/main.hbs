@@ -1,10 +1,10 @@
 <main>
-	<h3>
+	<h2 style="margin:40px;">
 		Ми радимо вам прочитати наступні статті:
-	</h3>
+	</h2>
 	<div>
 		{{#each articles}}
-			<a class="news" href="/articles/{{{this._id}}}"><div><p>{{{this.name}}}</p>
+			<a class="link" href="/articles/{{{this._id}}}"><div class="news"><p>{{{this.name}}}</p>
 				<p>{{{this.date}}}</p></div></a>
 		{{/each}}
 	</div>
