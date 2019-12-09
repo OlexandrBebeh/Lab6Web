@@ -1,0 +1,37 @@
+body {
+	background-color: #aba6a6;
+	align-items: center;
+}
+
+.footer {
+	width: 100%;
+	margin-left: 0;
+	margin-right: 0;
+	background-color: #f2e0a2;
+	align-items: center;
+	margin-top: 200px;
+}
+
+.header {
+	width: 100%;
+	margin-left: 0;
+	margin-right: 0;
+	border: 2px solid black;
+	background-color: #f2e0a2;
+	align-items: center;
+	margin-top: 150px;
+	margin-bottom: 100px;
+}
+
+.news {
+	text-decoration: none;
+	border: solid 1px black; 
+	padding: 0px;
+}
+
+main {
+	width: 80%;
+	margin-left: 10%;
+	background: #f5ecce;
+	border: solid 1px black; 
+}
