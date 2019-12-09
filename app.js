@@ -46,8 +46,7 @@ const ArticleSchema = new Schema(
 
 const Articles = mongoose.model('articles', ArticleSchema);
 app.get('/', (req, res) => {
-    res.end('DONE');
-    Articles.find({}, function (err, users) {
+    Articles.find({}, function(err, users) {
         res.render('main', { layout: 'default', articles: users });
     });
 });
