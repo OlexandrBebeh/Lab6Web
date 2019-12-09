@@ -1,6 +1,6 @@
 'use strict';
 
-const bodyParser = require("body-parser");
+const bodyParser = require('body-parser');
 const express = require('express');
 const hbs = require('express-handlebars');
 const path = require('path');
@@ -39,12 +39,12 @@ const ArticleSchema = new Schema(
     {
         name: { type: String, required: true },
         text: { type: String, required: true },
-        date: { type: Date, required: true }
+        date: { type: Date, required: true },
     },
     { versionKey: false }
 );
 
-const Articles = mongoose.model("articles", ArticleSchema);
+const Articles = mongoose.model('articles', ArticleSchema);
 app.get('/', (req, res) => {
     res.end('DONE');
     // Articles.find({}, function (err, users) {
@@ -53,9 +53,9 @@ app.get('/', (req, res) => {
 });
 
 app.use('/articles/:id', (req, res) => {
-    Articles.findById({_id: req.params.id }, (err, result) => {
+    Articles.findById({ _id: req.params.id }, (err, result) => {
         if (err) console.log(err);
-        res.render('article', { layout : 'default', article: result});
+        res.render('article', { layout: 'default', article: result });
     });
 });
 
@@ -65,15 +65,18 @@ app.get('/post', urlencodedParser, (req, res) => {
     console.log('get post');
     res.sendFile(__dirname + '/views/post.html');
 });
-app.post('/post', urlencodedParser, function (req, res) {
+app.post('/post', urlencodedParser, function(req, res) {
     console.log('post post');
-    if (!req.body) return response.sendStatus(400);
+    if (!req.body) return res.sendStatus(400);
     console.log(req.body);
-    Articles.create({ name: req.body.name, text: req.body.text, date: new Date() }, (err, doc) => {
-        if (err) return console.log(err);
-        console.log("Сохранен объект user", doc);
-    });
-   res.sendFile(__dirname + '/views/post.html');
+    Articles.create(
+        { name: req.body.name, text: req.body.text, date: new Date() },
+        (err, doc) => {
+            if (err) return console.log(err);
+            console.log('пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ user', doc);
+        }
+    );
+    res.sendFile(__dirname + '/views/post.html');
 });
 
 /*
