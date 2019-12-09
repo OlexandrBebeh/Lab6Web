@@ -1,5 +1,6 @@
 'use strict';
 
+const bodyParser = require("body-parser");
 const express = require('express');
 const hbs = require('express-handlebars');
 const path = require('path');
@@ -7,8 +8,7 @@ const app = express();
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const connectDB = require('./DB/Connection');
-
-
+connectDB();
 const Port = process.env.PORT || 3000;
 
 //const objectId = require('mongodb').ObjectID;
@@ -35,20 +35,49 @@ app.use('/views', (req, res) => {
     });
 });
 
-const articleSchema = new Schema({
-    name: { type: String, required: true },
-    text: { type: String, required: true }
+const ArticleSchema = new Schema(
+    {
+        name: { type: String, required: true },
+        text: { type: String, required: true },
+        date: { type: Date, required: true }
     },
     { versionKey: false }
 );
 
-const Articles = mongoose.model('Articles', articleSchema);
+const Articles = mongoose.model("articles", ArticleSchema);
+app.get('/', (req, res) => {
+    Articles.find({}, function (err, users) {
+        res.render('main', { layout: 'default', articles: users });
+    });
+});
 
-connectDB();
+app.use('/articles/:id', (req, res) => {
+    Articles.findById({_id: req.params.id }, (err, result) => {
+        if (err) console.log(err);
+        res.render('article', { layout : 'default', article: result});
+    });
+});
 
+const urlencodedParser = bodyParser.urlencoded({ extended: false });
+
+app.get('/post', urlencodedParser, (req, res) => {
+    res.sendFile(__dirname + '/views/post.html');
+});
+app.post('/post', urlencodedParser, function (req, res) {
+    if (!req.body) return response.sendStatus(400);
+    console.log(req.body);
+    Articles.create({ name: req.body.name, text: req.body.text, date: new Date() }, (err, doc) => {
+        if (err) return console.log(err);
+        console.log("Сохранен объект user", doc);
+    });
+    res.send(`${req.body.name} - ${req.body.text}`);
+   // res.sendFile(__dirname + '/views/post.html');
+});
+
+/*
 app.post('/', (req, res) => {
     console.log('All articles');
-    Articles.find({}).toArray(function (err, result) {
+    Articles.find({}).toArray(function(err, result) {
         if (err) throw err;
         result = result.map((elem) => {
             let news = '';
@@ -68,7 +97,7 @@ app.post('/', (req, res) => {
         });
         res.render('main', { layout: 'default', articles: result });
     });
-})
+});*/
 app.listen(Port, () => console.log('server start'));
 /*
 app.get('/', (req, res) => {

@@ -4,7 +4,8 @@
 	</h3>
 	<div>
 		{{#each articles}}
-			{{{this}}}
+			<a href="/articles/{{{this._id}}}"><div><p>{{{this.name}}}</p>
+				<p>{{{this.date}}}</p></div></a>
 		{{/each}}
 	</div>
 </main>
