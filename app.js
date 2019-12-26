@@ -4,9 +4,13 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const hbs = require('express-handlebars');
 const path = require('path');
-const app = express();
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+
+const app = express();
+const server = require('http').createServer(app);
+const io = require('socket.io').listen(server);
+
 const connectDB = require('./DB/Connection');
 connectDB();
 const Port = process.env.PORT || 3000;
@@ -35,6 +39,10 @@ app.use('/views', (req, res) => {
     });
 });
 
+app.get('/chat', (req, res) => {
+  res.render('chat', { layout: 'default',registration:false });
+});
+
 const ArticleSchema = new Schema(
     {
         name: { type: String, required: true },
@@ -45,6 +53,7 @@ const ArticleSchema = new Schema(
 );
 
 const Articles = mongoose.model('articles', ArticleSchema);
+
 app.get('/', (req, res) => {
     Articles.find({}, function(err, users) {
         res.render('main', { layout: 'default', articles: users });
@@ -78,6 +87,132 @@ app.post('/post', urlencodedParser, function(req, res) {
     res.sendFile(__dirname + '/views/post.html');
 });
 
+const UserSchema = new Schema(
+    {
+        username: { type: String, required: true, unique:true },
+        password: { type: String, required: true },
+    },
+    { versionKey: false }
+);
+
+const Users = mongoose.model('Users', UserSchema);
+
+app.get('/enter',urlencodedParser, (req, res) => {
+    res.render('enter',{ layout: 'default', error: false});
+});
+
+app.post('/enter', urlencodedParser, function(req, res) {
+    if (!req.body) return res.sendStatus(400);
+    const password = req.body.password;
+    Users.findOne({username:req.body.username},(err,doc)=>{
+      if(err) console.log(err);
+      if(password === doc.password){
+        res.render('chat',{ layout: 'default', username:doc.username, registration:true});
+      }
+      else{
+        res.render('enter',{ layout: 'default', error: true});
+      }
+    });
+});
+app.get('/regis',urlencodedParser, (req, res) => {
+    res.render('regis',{ layout: 'default', error: false});
+});
+app.post('/regis',urlencodedParser, (req, res) => {
+  if (!req.body) return res.sendStatus(400);
+    Users.create({username:req.body.username,password:req.body.password});
+    res.render('chat',{ layout: 'default', username: req.body.username, registration:true});
+});
+const connections = [];
+
+const MessgesSchema = new Schema(
+    {
+        user: { type: String, required: true },
+        text: { type: String, required: true },
+        date: { type: Date, required: true },
+    },
+    { versionKey: false }
+);
+const Messeges = mongoose.model('Messeges', MessgesSchema);
+
+io.on('connection', socket => {
+  console.log('new connection' + socket);
+  connections.push(socket);
+  socket.on('load history', ()=>{
+    
+      Messeges.find({}).then(result=>{
+        let doc = [];
+        for (var i = result.length - 1, j=0; i >= result.length - 10; i--) {
+          doc[j] = {
+            user:result[i].user,
+            text: result[i].text,
+            date:result[i].date
+          }
+          j++;
+        }
+
+        io.sockets.emit('history',doc);
+      });
+      
+  });
+socket.on('load full history', ()=>{
+    
+      Messeges.find({}).then(result=>{
+        let doc = [];
+        for (var i = result.length - 1, j=0; i >= 0; i--) {
+          doc[j] = {
+            user:result[i].user,
+            text: result[i].text,
+            date:result[i].date
+          }
+          j++;
+        }
+
+        io.sockets.emit('full history',doc);
+      });
+      
+  });
+  socket.on('disconnect', () => {
+    const index = connections.indexOf(socket);
+    io.sockets.emit('users loaded', '{ users }');
+  });
+
+  socket.on('send message', (message, user, date) => {
+    console.log('send message:', message, user);
+       Messeges.create({user:user, text:message, date: date});
+        io.sockets.emit('message', message, user, date);
+  });
+
+  socket.on('new user', ()=>{
+
+  });
+});
+
+
+
+server.listen('3000', () => {
+  console.log('Server listening on Port 3000');
+});
+
+
+// app.listen(Port, () => console.log('server start'));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
 app.post('/', (req, res) => {
     console.log('All articles');
@@ -102,7 +237,6 @@ app.post('/', (req, res) => {
         res.render('main', { layout: 'default', articles: result });
     });
 });*/
-app.listen(Port, () => console.log('server start'));
 /*
 app.get('/', (req, res) => {
     MongoClient.connect('mongodb://localhost:27017/', function(err, db) {

@@ -1,0 +1,12 @@
+<main>
+	<form method="post" action="/enter">
+	<input type="text" name="username"><br>
+	<input type="text" name="password"><br>	
+	<input type="submit" name="enter" value="Ввійти"><br>
+	<a href="/regis"><input type="button" name="registration" value="Регістрація" ></a><br>
+	<a href="/chat"><input type="button" value="Перегляд чату"></a>
+</form>
+</main>
+<script type="text/javascript">
+	if({{error}}) alert("Не вірний логін або пароль");
+</script>

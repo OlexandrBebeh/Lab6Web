@@ -1,0 +1,10 @@
+<main>
+	<form method="post" action="/regis">
+	<input type="text" name="username"><br>
+	<input type="text" name="password"><br>	
+	<input type="submit" name="registration" value="Зареєструватись">
+</form>
+</main>
+<script type="text/javascript">
+	if({{error}}) alert("Не вірний логін або пароль");
+</script>

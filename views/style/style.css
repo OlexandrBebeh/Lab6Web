@@ -1,5 +1,5 @@
 body {
-	background-color: #aba6a6;
+	background-color: #ffeb85;
 	align-items: center;
 
 }
@@ -70,3 +70,34 @@ li {
     padding: 5px; 
     font-size: 30px;
 	}
+
+.chat{
+	margin: 0px;
+	width: 80%;
+	margin-left: 10%;
+	min-height: 500px;
+	background: #f5ecce;
+	border: solid 1px black; 
+}
+
+#history {
+	height: 700px;
+	 	background: #ffffff;
+	margin: 40px;
+	align-items: center;
+}
+
+.chat-sender {
+	margin: 40px;
+	align-items: center;
+}
+ .messages {
+
+            overflow-y: scroll; 
+        }
+
+.message {
+	border: 1px solid black;
+	margin: 10px;
+	padding: 10px;
+}

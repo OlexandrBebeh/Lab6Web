@@ -1,0 +1,64 @@
+<script src="/socket.io/socket.io.js"></script>
+<div class="chat">
+<form name="chatForm">
+	<input type="button" name="prehistory" value="Попередні повідомлення" onclick="PrepHistory(chatForm)">
+	<div class="messages" id="history">
+		
+	</div>
+	{{#if registration}}
+	<div>
+
+	<input type="text" name="message">
+	<input type="button" name="send" value="send" onclick="Send(chatForm)">
+	</div>
+	{{else}}
+	<div class="chat-sender">
+	<a href="/enter"><input type="button" name="enter" value="Ввійти"></a><br>
+	<a href="/regis"><input type="button" name="registration" value="Регістрація"></a><br>
+	</div>
+	{{/if}}
+
+</form>
+
+<script type="text/javascript">
+	const User = '{{ username }}';
+	const socket = io.connect('localhost:3000');
+	let history = 
+	socket.emit('load history');
+	socket.on('new user', data => {
+		console.log('new user:', data);
+	});
+	socket.on('history', doc=>{
+		const content = document.getElementById('history');
+		for (var i = doc.length - 1; i >= 0; i--) {
+			content.innerHTML += '<div class="message"><p>' + doc[i].user + '</p><p>' + doc[i].text + '</p><p>' + doc[i].date + '</p></div>';
+		}
+	});
+	socket.on('message', (message, user, date) => {
+		console.log(message);
+		const content = document.getElementById('history');
+		content.innerHTML += '<div class="message"><p>' + user + '</p><p>' + message + '</p><p>' + date + '</p></div>';
+	})
+	function Send(form) {
+		const message = form.message.value;
+		form.message.value = '';
+		socket.emit('send message', message, User, new Date());
+	}
+
+	socket.on('history', messages=>{
+		console.log(messages);
+	});
+
+	function PrepHistory(form){
+		socket.emit('load full history');
+		socket.on('full history', doc=>{
+
+		const content = document.getElementById('history');
+		content.innerHTML = '';
+		for (var i = doc.length - 1; i >= 0; i--) {
+			content.innerHTML += '<div class="message"><p>' + doc[i].user + '</p><p>' + doc[i].text + '</p><p>' + doc[i].date + '</p></div>';
+		}
+	});
+	}
+</script>
+</div>
