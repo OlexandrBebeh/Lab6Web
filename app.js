@@ -40,7 +40,7 @@ app.use('/views', (req, res) => {
 });
 
 app.get('/chat', (req, res) => {
-  res.render('chat', { layout: 'default',registration:false });
+    res.render('chat', { layout: 'default', registration: false });
 });
 
 const ArticleSchema = new Schema(
@@ -89,7 +89,7 @@ app.post('/post', urlencodedParser, function(req, res) {
 
 const UserSchema = new Schema(
     {
-        username: { type: String, required: true, unique:true },
+        username: { type: String, required: true, unique: true },
         password: { type: String, required: true },
     },
     { versionKey: false }
@@ -97,30 +97,37 @@ const UserSchema = new Schema(
 
 const Users = mongoose.model('Users', UserSchema);
 
-app.get('/enter',urlencodedParser, (req, res) => {
-    res.render('enter',{ layout: 'default', error: false});
+app.get('/enter', urlencodedParser, (req, res) => {
+    res.render('enter', { layout: 'default', error: false });
 });
 
 app.post('/enter', urlencodedParser, function(req, res) {
     if (!req.body) return res.sendStatus(400);
     const password = req.body.password;
-    Users.findOne({username:req.body.username},(err,doc)=>{
-      if(err) console.log(err);
-      if(password === doc.password){
-        res.render('chat',{ layout: 'default', username:doc.username, registration:true});
-      }
-      else{
-        res.render('enter',{ layout: 'default', error: true});
-      }
+    Users.findOne({ username: req.body.username }, (err, doc) => {
+        if (err) console.log(err);
+        if (password === doc.password) {
+            res.render('chat', {
+                layout: 'default',
+                username: doc.username,
+                registration: true,
+            });
+        } else {
+            res.render('enter', { layout: 'default', error: true });
+        }
     });
 });
-app.get('/regis',urlencodedParser, (req, res) => {
-    res.render('regis',{ layout: 'default', error: false});
+app.get('/regis', urlencodedParser, (req, res) => {
+    res.render('regis', { layout: 'default', error: false });
 });
-app.post('/regis',urlencodedParser, (req, res) => {
-  if (!req.body) return res.sendStatus(400);
-    Users.create({username:req.body.username,password:req.body.password});
-    res.render('chat',{ layout: 'default', username: req.body.username, registration:true});
+app.post('/regis', urlencodedParser, (req, res) => {
+    if (!req.body) return res.sendStatus(400);
+    Users.create({ username: req.body.username, password: req.body.password });
+    res.render('chat', {
+        layout: 'default',
+        username: req.body.username,
+        registration: true,
+    });
 });
 const connections = [];
 
@@ -134,84 +141,62 @@ const MessgesSchema = new Schema(
 );
 const Messeges = mongoose.model('Messeges', MessgesSchema);
 
-io.on('connection', socket => {
-  console.log('new connection' + socket);
-  connections.push(socket);
-  socket.on('load history', ()=>{
-    
-      Messeges.find({}).then(result=>{
-        let doc = [];
-        for (var i = result.length - 1, j=0; i >= result.length - 10; i--) {
-          doc[j] = {
-            user:result[i].user,
-            text: result[i].text,
-            date:result[i].date
-          }
-          j++;
-        }
+io.on('connection', (socket) => {
+    console.log('new connection' + socket);
+    connections.push(socket);
+    socket.on('load history', () => {
+        Messeges.find({}).then((result) => {
+            let doc = [];
+            for (
+                var i = result.length - 1, j = 0;
+                i >= result.length - 10;
+                i--
+            ) {
+                doc[j] = {
+                    user: result[i].user,
+                    text: result[i].text,
+                    date: result[i].date,
+                };
+                j++;
+            }
 
-        io.sockets.emit('history',doc);
-      });
-      
-  });
-socket.on('load full history', ()=>{
-    
-      Messeges.find({}).then(result=>{
-        let doc = [];
-        for (var i = result.length - 1, j=0; i >= 0; i--) {
-          doc[j] = {
-            user:result[i].user,
-            text: result[i].text,
-            date:result[i].date
-          }
-          j++;
-        }
+            io.sockets.emit('history', doc);
+        });
+    });
+    socket.on('load full history', () => {
+        Messeges.find({}).then((result) => {
+            let doc = [];
+            for (var i = result.length - 1, j = 0; i >= 0; i--) {
+                doc[j] = {
+                    user: result[i].user,
+                    text: result[i].text,
+                    date: result[i].date,
+                };
+                j++;
+            }
 
-        io.sockets.emit('full history',doc);
-      });
-      
-  });
-  socket.on('disconnect', () => {
-    const index = connections.indexOf(socket);
-    io.sockets.emit('users loaded', '{ users }');
-  });
+            io.sockets.emit('full history', doc);
+        });
+    });
+    socket.on('disconnect', () => {
+        //const index = connections.indexOf(socket);
+        io.sockets.emit('users loaded', '{ users }');
+    });
 
-  socket.on('send message', (message, user, date) => {
-    console.log('send message:', message, user);
-       Messeges.create({user:user, text:message, date: date});
+    socket.on('send message', (message, user, date) => {
+        console.log('send message:', message, user);
+        Messeges.create({ user: user, text: message, date: date });
         io.sockets.emit('message', message, user, date);
-  });
+    });
 
-  socket.on('new user', ()=>{
-
-  });
+    socket.on('new user', () => {});
 });
 
-
-
-server.listen('3000', () => {
-  console.log('Server listening on Port 3000');
+server.listen(Port, () => {
+    console.log('Server listening on Port 3000');
 });
-
 
 // app.listen(Port, () => console.log('server start'));
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /*
 app.post('/', (req, res) => {
