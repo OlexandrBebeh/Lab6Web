@@ -22,7 +22,7 @@
 
 <script type="text/javascript">
 	const User = '{{ username }}';
-	const socket = io.connect('localhost:3000');
+	const socket = io.connect('https://lab6web.herokuapp.com');
 	let history = 
 	socket.emit('load history');
 	socket.on('new user', data => {
