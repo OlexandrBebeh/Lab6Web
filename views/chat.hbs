@@ -1,7 +1,9 @@
 <script src="/socket.io/socket.io.js"></script>
 <div class="chat">
 <form name="chatForm">
-	<input type="button" name="prehistory" value="Попередні повідомлення" onclick="PrepHistory(chatForm)">
+	{{#if registration}}
+	<input type="button" style="align-self: center;" name="prehistory" value="Попередні повідомлення" onclick="PrepHistory(chatForm)">
+	{{/if}}
 	<div class="messages" id="history">
 		
 	</div>
@@ -12,7 +14,7 @@
 	<input type="button" name="send" value="send" onclick="Send(chatForm)">
 	</div>
 	{{else}}
-	<div class="chat-sender">
+	<div style="align-self: center;" class="chat-sender">
 	<a href="/enter"><input type="button" name="enter" value="Ввійти"></a><br>
 	<a href="/regis"><input type="button" name="registration" value="Регістрація"></a><br>
 	</div>
